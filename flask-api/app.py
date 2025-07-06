@@ -1,5 +1,9 @@
+from dotenv import load_dotenv
+import os
 import pandas as pd
 from flask import Flask, jsonify
+from config import Config
+
 
 from analytics.calculator import (
     calculate_returns, average_return, standard_deviation,
@@ -10,9 +14,15 @@ from analytics.portfolio_data import load_portfolio_data
 app = Flask(__name__)
 
 
+load_dotenv()  # Load variables from .env
+
+
 @app.get("/")
 def home():
-    return jsonify({"message": "Welcome to the DevOps Portfolio Analytics API"})
+
+    return jsonify({
+        "message": f"Welcome to the DevOps Portfolio Analytics API {Config.FLASK_ENV}"
+    })
 
 
 @app.get("/portfolio-values")
