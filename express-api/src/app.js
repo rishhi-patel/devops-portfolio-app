@@ -7,4 +7,8 @@ app.use(cors())
 app.use(express.json())
 app.use("/api/portfolio", portfolioRoutes)
 
+app.get("/", (req, res) => {
+  res.send("Express API is running")
+})
+
 export default app

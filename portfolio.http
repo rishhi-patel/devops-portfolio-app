@@ -1,0 +1,44 @@
+@host = http://localhost:3000
+@base = {{host}}/api/portfolio
+
+### -----------------------------------------------------------
+### 1. Create a new portfolio            @name createPortfolio
+POST {{base}}
+Content-Type: application/json
+
+{
+  "name": "Growth Fund",
+  "owner": "Rishhi",
+  "assets": [
+    { "ticker": "AAPL", "quantity": 10, "purchasePrice": 150 },
+    { "ticker": "MSFT", "quantity": 5,  "purchasePrice": 310 }
+  ]
+}
+
+### Capture the ID from the previous response JSON ⤵︎
+@portfolioId = 686a0cc075e924a13b3400ae
+
+### -----------------------------------------------------------
+### 2. List all portfolios
+GET {{base}}
+
+### -----------------------------------------------------------
+### 3. Get portfolio by ID
+GET {{base}}/{{portfolioId}}
+
+### -----------------------------------------------------------
+### 4. Update portfolio name
+PUT {{base}}/{{portfolioId}}
+Content-Type: application/json
+
+{
+  "name": "Super Growth Fund"
+}
+
+### -----------------------------------------------------------
+### 5. Delete portfolio
+DELETE {{base}}/{{portfolioId}}
+
+### -----------------------------------------------------------
+### 6. Negative test - GET non-existent ID  (should return 404)
+GET {{base}}/000000000000000000000000

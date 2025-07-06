@@ -1,8 +1,18 @@
-import { Router } from 'express';
-const router = Router();
+import { Router } from "express"
+import {
+  createPortfolio,
+  getPortfolios,
+  getPortfolio,
+  updatePortfolio,
+  deletePortfolio,
+} from "../controllers/portfolioController.js"
 
-router.get('/', (_req, res) => {
-  res.json({ message: 'Portfolio list – placeholder' });
-});
+const router = Router()
 
-export default router;
+router.post("/", createPortfolio)
+router.get("/", getPortfolios)
+router.get("/:id", getPortfolio)
+router.put("/:id", updatePortfolio)
+router.delete("/:id", deletePortfolio)
+
+export default router

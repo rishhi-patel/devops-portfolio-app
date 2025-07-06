@@ -1,16 +1,44 @@
-from flask import Flask, jsonify
 import pandas as pd
+from flask import Flask, jsonify
+
+from analytics.calculator import (
+    calculate_returns, average_return, standard_deviation,
+    sharpe_ratio, max_drawdown
+)
+from analytics.portfolio_data import load_portfolio_data
 
 app = Flask(__name__)
 
 
+@app.get("/")
+def home():
+    return jsonify({"message": "Welcome to the DevOps Portfolio Analytics API"})
+
+
+@app.get("/portfolio-values")
+def get_portfolio_time_series():
+    ts = load_portfolio_data()
+
+    # If index is Timestamp: convert to ISO string
+    if isinstance(ts.index[0], pd.Timestamp):
+        ts.index = ts.index.strftime("%Y-%m-%d")
+
+    return ts.to_dict()  # string keys, float values — safe for Flask JSON
+
+
 @app.get("/analytics")
 def analytics():
-    dummy = pd.DataFrame({"return": [0.05, 0.02, 0.07]})
-    return jsonify({
-        "avgReturn": dummy["return"].mean(),
-        "maxReturn": dummy["return"].max()
-    })
+    ts = load_portfolio_data()
+    returns = calculate_returns(ts['value'])  # Pass series
+
+    result = {
+        "avg_return": round(float(average_return(returns)), 4),
+        "stdev": round(float(standard_deviation(returns)), 4),
+        "sharpe_ratio": round(float(sharpe_ratio(returns)), 4),
+        "max_drawdown": round(float(max_drawdown(ts['value'])), 4)
+    }
+
+    return result
 
 
 if __name__ == "__main__":
