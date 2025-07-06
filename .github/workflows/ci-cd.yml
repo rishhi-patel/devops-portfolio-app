@@ -1,0 +1,33 @@
+name: CI/CD
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Build images (cache only)
+        uses: docker/bake-action@v4
+        with:
+          push: false
+
+  deploy:
+    needs: build-test
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Terraform Init & Apply
+        env:
+          TF_VAR_ecr_repo: ${{ secrets.ECR_REPO }}
+        run: |
+          cd terraform
+          terraform init -input=false
+          terraform apply -auto-approve -input=false

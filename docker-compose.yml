@@ -1,0 +1,28 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: portfolio-mongo
+    volumes:
+      - mongo_data:/data/db
+      - ./mongo-init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "27017:27017"
+
+  express-api:
+    build: ./express-api
+    ports:
+      - "3000:3000"
+    environment:
+      - MONGO_URL=mongodb://mongo:27017/portfolio_db
+    depends_on:
+      - mongo
+
+  flask-api:
+    build: ./flask-api
+    ports:
+      - "5000:5000"
+    depends_on:
+      - express-api
+
+volumes:
+  mongo_data:

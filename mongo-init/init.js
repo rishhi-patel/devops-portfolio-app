@@ -1,0 +1,1 @@
+print('Seeding portfolio_db…');
