@@ -1,1 +1,0 @@
-output "alb_dns" { value = "example.com" }
